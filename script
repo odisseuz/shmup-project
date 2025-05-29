@@ -16,7 +16,7 @@ function _update()
     animate_flame()
     animate_bullet()
     wrap_ship()
-    
+    animate_stars()
 end
 
 function _draw()
@@ -33,7 +33,7 @@ function _draw()
 		
 end
 
-
+--- functions ---
 -- functions
 -- --------------------
 
@@ -171,25 +171,54 @@ function draw_lives_bombs()
         end
     end
 end
--- starfield
---------------
+--stars--
+
+--starfield
 
 function init_starfield()
     starsx = {}
     starsy = {}
+    starspd = {}
+    starclr = {} -- colors
+
     for i = 1, 100 do
-        add(starsx,flr(rnd(128)))
-        add(starsy,flr(rnd(128)))
+        local x = flr(rnd(128))
+        local y = flr(rnd(128))
+        local spd = flr(rnd(5)) + 0.5
+
+        -- assign color based on speed
+        local clr
+        if spd < 1.5 then
+            clr = 5 -- dark gray
+        elseif spd < 2.5 then
+            clr = 12 -- blue
+        elseif spd < 3.5 then
+            clr = 14 -- light blue
+        elseif spd < 4.5 then
+            clr = 10 -- yellow
+        else
+            clr = 7 -- white
+        end
+
+        add(starsx, x)
+        add(starsy, y)
+        add(starspd, spd)
+        add(starclr, clr)
     end
 end
 
+function starfield()
+    for i = 1, #starsx do
+        pset(starsx[i], starsy[i], starclr[i])
+    end
+end
 
-function starfield ()
-
- for i=1,#starsx do
-	pset(starsx[i], starsy[i], 7)
- 
- end
-
+function animate_stars()
+    for i = 1, #starsy do
+        starsy[i] = starsy[i] + starspd[i]
+        if starsy[i] > 128 then
+            starsy[i] = starsy[i] - 128
+        end
+    end
 end
 
