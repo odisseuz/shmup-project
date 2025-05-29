@@ -1,0 +1,157 @@
+function _init()
+
+    init_ship()
+    init_bullets()
+    init_score()
+    init_life()
+end
+
+function _update()
+
+    handle_controls()
+    move_ship()
+    move_bullets()
+    animate_flame()
+    animate_bullet()
+    wrap_ship()
+    
+end
+
+function _draw()
+
+    cls(0)
+    draw_ship()
+    draw_bullets()
+    draw_flame()
+    draw_muzzle()
+    draw_score()
+    draw_heart()
+end
+
+-- --------------------
+-- helper functions
+-- --------------------
+
+function init_ship()
+    shipx = 64
+    shipy = 64
+    shipsx = 0
+    shipsy = 0
+    shipspr = 1
+    flamespr = 6 -- muzzle sprite
+end
+
+function init_life()
+	heart=0
+end
+
+function init_score()
+	score=0
+end
+
+function init_bullets()
+    bulx = 64
+    buly = -10
+    bul1x = 64
+    bul1y = -10
+    bulspr = 16 -- bullet sprite
+    muzzle = 0
+end
+
+function handle_controls()
+    shipsx = 0
+    shipsy = 0
+    shipspr = 1
+
+    if btn(0) then
+        shipsx = -2
+        shipspr = 2
+    end
+    if btn(1) then
+        shipsx = 3
+        shipspr = 3
+    end
+    if btn(2) then
+        shipsy = -2
+    end
+    if btn(3) then
+        shipsy = 2
+    end
+
+    if btnp(5) then
+        bulx = shipx
+        buly = shipy - 3
+        muzzle = 7
+        sfx(0)
+    end
+
+    if btnp(4) then
+        bul1x = shipx
+        bul1y = shipy - 2
+        muzzle = 10
+        sfx(1)
+    end
+end
+
+function move_ship()
+    shipx += shipsx
+    shipy += shipsy
+end
+
+function move_bullets()
+    buly -= 4
+    bul1y -= 2
+end
+
+function animate_flame()
+    flamespr += 1
+    if flamespr > 10 then
+        flamespr = 6
+    end
+end
+
+function animate_bullet()
+    bulspr += 1
+    if bulspr > 18 then
+        bulspr = 16
+    end
+end
+
+function wrap_ship()
+    if shipx > 120 then
+        shipx = 0
+    elseif shipx < 0 then
+        shipx = 120
+    end
+end
+
+function draw_ship()
+    spr(shipspr, shipx, shipy)
+end
+
+function draw_bullets()
+    spr(bulspr, bulx, buly)
+    spr(32, bul1x, bul1y - 2)
+end
+
+function draw_flame()
+    spr(flamespr, shipx, shipy + 8)
+end
+
+function draw_muzzle()
+    if muzzle == 7 then
+        muzzle -= 2
+        circfill(shipx + 3, shipy - 3, muzzle, 7)
+    elseif muzzle == 10 then
+        muzzle -= 0.5
+        circfill(shipx + 3, shipy - 3, muzzle, 10)
+    end
+end
+function draw_score()
+	print ("score: ".. score ,40, 1, 12)
+end
+function draw_heart()
+	for i=1,3 do 
+  spr (13, i*9 , 1)
+ end
+end
