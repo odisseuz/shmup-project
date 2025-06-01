@@ -36,7 +36,7 @@ function _draw()
     draw_score()
     draw_lives_bombs()
     
-    
+   
 
 		
 end
@@ -195,6 +195,7 @@ function bomb_flame()
 
 end
 --stars--
+
 --starfield
 
 function init_starfield()
@@ -325,3 +326,4 @@ end
         if asteroidsx[i] > 128 then asteroidsx[i] = 0 end
     end
 end
+
