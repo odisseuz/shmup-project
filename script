@@ -1,11 +1,12 @@
---main
-
 function _init()
 
     init_ship()
     init_bullets()
     init_score()
     init_starfield()
+    init_bul1()
+    init_planets()
+    init_asteroids ()
 end
 
 function _update()
@@ -13,27 +14,33 @@ function _update()
     handle_controls()
     move_ship()
     move_bullets()
+    flame_bul1()
     animate_flame()
     animate_bullet()
     wrap_ship()
     animate_stars()
+    animate_planets()
+    animate_asteroids ()
 end
 
 function _draw()
 
     cls(0)
+    draw_asteroids ()
+    draw_planets()
+    starfield ()
     draw_ship()
     draw_bullets()
     draw_flame()
     draw_muzzle()
     draw_score()
     draw_lives_bombs()
-    starfield ()
+    
+    
 
 		
 end
 
---- functions ---
 -- functions
 -- --------------------
 
@@ -53,10 +60,15 @@ end
 function init_bullets()
     bulx = 64
     buly = -10
-    bul1x = 64
-    bul1y = -10
     bulspr = 16 -- bullet sprite
     muzzle = 0
+end
+
+function init_bul1()
+	bul1=3					--number of bombs
+	bul1x=64
+ bul1y=-10
+
 end
 
 
@@ -119,6 +131,12 @@ function animate_bullet()
     end
 end
 
+function flame_bul1 ()
+
+
+
+end
+
 function wrap_ship()
     if shipx > 120 then
         shipx = 0
@@ -171,7 +189,14 @@ function draw_lives_bombs()
         end
     end
 end
+
+
+function bomb_flame() 
+	
+
+end
 --stars--
+
 
 --starfield
 
@@ -221,4 +246,85 @@ function animate_stars()
         end
     end
 end
+function init_planets()
+    planetsx = {}
+    planetsy = {}
+    planetspd = {}
+    planetsize = {}
+    planetclr = {}
 
+    for i = 1, 5 do
+        local x = flr(rnd(128))
+        local y = flr(rnd(128))
+        local distance_factor = rnd(1) 
+        local spd = 0.1 + distance_factor * 0.4 
+        local size = 1 + flr((1 - distance_factor) * 2) 
+        local clr = 5 + flr(distance_factor * 6) 
+
+        add(planetsx, x)
+        add(planetsy, y)
+        add(planetspd, spd)
+        add(planetsize, size)
+        add(planetclr, clr)
+    end
+end
+
+function draw_planets()
+    for i = 1, #planetsx do
+        circfill(planetsx[i], planetsy[i], planetsize[i], planetclr[i])
+    end
+end
+
+function animate_planets()
+    for i = 1, #planetsx do
+        planetsx[i] += planetspd[i]
+        planetsy[i] += planetspd[i]
+
+        -- wrap around screen
+        if planetsx[i] > 128 then planetsx[i] = 0 end
+        if planetsy[i] > 128 then planetsy[i] = 0 end
+    end
+end
+
+function init_asteroids ()
+   
+    asteroidsx = {}
+    asteroidsy = {}
+    asteroidsspd = {}
+    asteroidsize = {}
+     
+    for i=1, 5 do 
+        local x = flr(rnd(128))
+        local y = flr(rnd(128))
+        local distance_factor = rnd(1) 
+        local spd = 0.1 + distance_factor * 0.4 
+        local size = flr(rnd(2))+0.1 -- will be 0.1 or 1.1         
+        add(asteroidsx, x)
+        add(asteroidsy, y)
+        add(asteroidsspd, spd)
+        add(asteroidsize, size)
+    end
+end
+
+	function draw_asteroids ()
+	
+	for i=1, #asteroidsx do
+	
+	local x = asteroidsx[i]
+	local y = asteroidsy[i]
+	local size = asteroidsize[i]
+	local sprite = 24
+	
+	spr (sprite, x, y)
+	
+	
+	end
+	
+	end
+	
+	function animate_asteroids()
+    for i=1, #asteroidsx do
+        asteroidsx[i] += asteroidsspd[i]  
+        if asteroidsx[i] > 128 then asteroidsx[i] = 0 end
+    end
+end
