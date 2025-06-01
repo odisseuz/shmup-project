@@ -40,7 +40,6 @@ function _draw()
 
 		
 end
-
 -- functions
 -- --------------------
 
@@ -196,8 +195,6 @@ function bomb_flame()
 
 end
 --stars--
-
-
 --starfield
 
 function init_starfield()
@@ -214,11 +211,11 @@ function init_starfield()
         -- assign color based on speed
         local clr
         if spd < 1.5 then
-            clr = 5 -- dark gray
+            clr = 13 -- dark gray
         elseif spd < 2.5 then
-            clr = 12 -- blue
+            clr = 6 -- blue
         elseif spd < 3.5 then
-            clr = 14 -- light blue
+            clr = 9 -- light blue
         elseif spd < 4.5 then
             clr = 10 -- yellow
         else
@@ -293,7 +290,7 @@ function init_asteroids ()
     asteroidsspd = {}
     asteroidsize = {}
      
-    for i=1, 5 do 
+    for i=1, 1 do 
         local x = flr(rnd(128))
         local y = flr(rnd(128))
         local distance_factor = rnd(1) 
