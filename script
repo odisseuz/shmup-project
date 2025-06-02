@@ -1,329 +1,332 @@
-function _init()
-
-    init_ship()
-    init_bullets()
-    init_score()
-    init_starfield()
-    init_bul1()
-    init_planets()
-    init_asteroids ()
-end
-
-function _update()
-
-    handle_controls()
-    move_ship()
-    move_bullets()
-    flame_bul1()
-    animate_flame()
-    animate_bullet()
-    wrap_ship()
-    animate_stars()
-    animate_planets()
-    animate_asteroids ()
-end
-
-function _draw()
-
-    cls(0)
-    draw_asteroids ()
-    draw_planets()
-    starfield ()
-    draw_ship()
-    draw_bullets()
-    draw_flame()
-    draw_muzzle()
-    draw_score()
-    draw_lives_bombs()
-    
-   
-
-		
-end
--- functions
--- --------------------
-
-function init_ship()
-    shipx = 64
-    shipy = 64
-    shipsx = 0
-    shipsy = 0
-    shipspr = 1
-    flamespr = 6 -- muzzle sprite
-end
-
-function init_score()
-	score=0
-end
-
-function init_bullets()
-    bulx = 64
-    buly = -10
-    bulspr = 16 -- bullet sprite
-    muzzle = 0
-end
-
-function init_bul1()
-	bul1=3					--number of bombs
-	bul1x=64
- bul1y=-10
-
-end
-
-
-function handle_controls()
-    shipsx = 0
-    shipsy = 0
-    shipspr = 1
-
-    if btn(0) then
-        shipsx = -2
-        shipspr = 2
-    end
-    if btn(1) then
-        shipsx = 3
-        shipspr = 3
-    end
-    if btn(2) then
-        shipsy = -2
-    end
-    if btn(3) then
-        shipsy = 2
-    end
-
-    if btnp(5) then
-        bulx = shipx
-        buly = shipy - 3
-        muzzle = 7
-        sfx(0)
-    end
-
-    if btnp(4) then
-        bul1x = shipx
-        bul1y = shipy - 2
-        muzzle = 10
-        sfx(1)
-    end
-end
-
-function move_ship()
-    shipx += shipsx
-    shipy += shipsy
-end
-
-function move_bullets()
-    buly -= 4
-    bul1y -= 2
-end
-
-function animate_flame()
-    flamespr += 1
-    if flamespr > 10 then
-        flamespr = 6
-    end
-end
-
-function animate_bullet()
-    bulspr += 1
-    if bulspr > 18 then
-        bulspr = 16
-    end
-end
-
-function flame_bul1 ()
-
-
-
-end
-
-function wrap_ship()
-    if shipx > 120 then
-        shipx = 0
-    elseif shipx < 0 then
-        shipx = 120
-    end
-end
-
-function draw_ship()
-    spr(shipspr, shipx, shipy)
-end
-
-function draw_bullets()
-    spr(bulspr, bulx, buly)
-    spr(32, bul1x, bul1y - 2)
-end
-
-function draw_flame()
-    spr(flamespr, shipx, shipy + 8)
-end
-
-function draw_muzzle()
-    if muzzle == 7 then
-        muzzle -= 2
-        circfill(shipx + 3, shipy - 3, muzzle, 7)
-    elseif muzzle == 10 then
-        muzzle -= 0.5
-        circfill(shipx + 3, shipy - 3, muzzle, 10)
-    end
-end
-
-function draw_score()
-	print ("score: ".. score ,40, 1, 12)
-end
-
-function draw_lives_bombs()
-	lives=3
-	for i=1,4 do
-  if lives>=i then
-   spr(13,i*9-8,1)
-  else
-   spr(14,i*9-8,1)
-  end 
-  
- end
- bombs=3
-    for i=1,4 do
-        if bombs >= i then
-            spr(32, 128 - i*9, 1)
-        end
-    end
-end
-
-
-function bomb_flame() 
+	mode = "start" 
 	
-
-end
---stars--
-
---starfield
-
-function init_starfield()
-    starsx = {}
-    starsy = {}
-    starspd = {}
-    starclr = {} -- colors
-
-    for i = 1, 100 do
-        local x = flr(rnd(128))
-        local y = flr(rnd(128))
-        local spd = flr(rnd(5)) + 0.5
-
-        -- assign color based on speed
-        local clr
-        if spd < 1.5 then
-            clr = 13 -- dark gray
-        elseif spd < 2.5 then
-            clr = 6 -- blue
-        elseif spd < 3.5 then
-            clr = 9 -- light blue
-        elseif spd < 4.5 then
-            clr = 10 -- yellow
-        else
-            clr = 7 -- white
-        end
-
-        add(starsx, x)
-        add(starsy, y)
-        add(starspd, spd)
-        add(starclr, clr)
-    end
-end
-
-function starfield()
-    for i = 1, #starsx do
-        pset(starsx[i], starsy[i], starclr[i])
-    end
-end
-
-function animate_stars()
-    for i = 1, #starsy do
-        starsy[i] = starsy[i] + starspd[i]
-        if starsy[i] > 128 then
-            starsy[i] = starsy[i] - 128
-        end
-    end
-end
-function init_planets()
-    planetsx = {}
-    planetsy = {}
-    planetspd = {}
-    planetsize = {}
-    planetclr = {}
-
-    for i = 1, 5 do
-        local x = flr(rnd(128))
-        local y = flr(rnd(128))
-        local distance_factor = rnd(1) 
-        local spd = 0.1 + distance_factor * 0.4 
-        local size = 1 + flr((1 - distance_factor) * 2) 
-        local clr = 5 + flr(distance_factor * 6) 
-
-        add(planetsx, x)
-        add(planetsy, y)
-        add(planetspd, spd)
-        add(planetsize, size)
-        add(planetclr, clr)
-    end
-end
-
-function draw_planets()
-    for i = 1, #planetsx do
-        circfill(planetsx[i], planetsy[i], planetsize[i], planetclr[i])
-    end
-end
-
-function animate_planets()
-    for i = 1, #planetsx do
-        planetsx[i] += planetspd[i]
-        planetsy[i] += planetspd[i]
-
-        -- wrap around screen
-        if planetsx[i] > 128 then planetsx[i] = 0 end
-        if planetsy[i] > 128 then planetsy[i] = 0 end
-    end
-end
-
-function init_asteroids ()
-   
-    asteroidsx = {}
-    asteroidsy = {}
-    asteroidsspd = {}
-    asteroidsize = {}
-     
-    for i=1, 1 do 
-        local x = flr(rnd(128))
-        local y = flr(rnd(128))
-        local distance_factor = rnd(1) 
-        local spd = 0.1 + distance_factor * 0.4 
-        local size = flr(rnd(2))+0.1 -- will be 0.1 or 1.1         
-        add(asteroidsx, x)
-        add(asteroidsy, y)
-        add(asteroidsspd, spd)
-        add(asteroidsize, size)
-    end
-end
-
-	function draw_asteroids ()
+	function _init()
+	    init_starfield()
+	    init_planets()
+	    init_asteroids()
+	    score = 0
+	end
 	
-	for i=1, #asteroidsx do
-	
-	local x = asteroidsx[i]
-	local y = asteroidsy[i]
-	local size = asteroidsize[i]
-	local sprite = 24
-	
-	spr (sprite, x, y)
-	
+	function _update()
+	    if mode == "game" then
+	        update_game()
+	    elseif mode == "start" then
+	        update_start()
+	    elseif mode == "over" then
+	        update_over()
+	    end
 	
 	end
 	
+	function _draw()
+	    cls(0) 
+	
+	    if mode == "game" then
+	        draw_game()
+	    elseif mode == "start" then
+	        draw_start()
+	    elseif mode == "over" then
+	        draw_over()
+	    end 
+	  
+	end
+	
+	-- game initialization and reset function
+	
+	function start_game()
+	    mode = "game" 
+	
+	    -- reset ship properties
+	    shipx = 64
+	    shipy = 64
+	    shipsx = 0
+	    shipsy = 0
+	    shipspr = 1
+	    flamespr = 6
+	
+	    -- reset bullets/bombs
+	    bulx = 64
+	    buly = -10
+	    bulspr = 16
+	    muzzle = 0
+	    bul1 = 3
+	    bul1x = 64
+	    bul1y = -10
+	
+	    -- reset score and lives
+	    score = 0 
+	    lives = 3 
+	
+	    init_starfield()
+	    init_planets()
+	    init_asteroids()
+	end
+	
+	-- others game state functions
+	
+	function draw_start()
+	    print("★ space battle simulation ★", 15, 40, 12)
+	    print("press z and x to start", 20, 80, 7)
+	end
+	
+	function draw_over()
+	    print("you died!",15, 40, 12)
+	    print ("press z and x to start",20, 80, 7)
+	end
+	
+	function update_start()
+	    -- check for button 5 (x button in pico-8) to start the game
+	    if btnp(5) and btn (4) then         
+	    start_game() 
+	    end
+	end
+	function update_over()
+	     if btnp(5) and btn (4) then         
+	    start_game() 
+	    end
+	end
+	
+	
+	--initialization functions
+	
+	function init_starfield()
+	    starsx = {}
+	    starsy = {}
+	    starspd = {}
+	    starclr = {}
+	    starprevx = {}
+	    starprevy = {}
+	
+	    for i = 1, 100 do
+	        local x = flr(rnd(128))
+	        local y = flr(rnd(128))
+	        local spd = flr(rnd(5)) + 0.5
+	        local clr
+	        if spd < 1.5 then clr = 13
+	        elseif spd < 2.5 then clr = 6
+	        elseif spd < 3.5 then clr = 9
+	        elseif spd < 4.5 then clr = 10
+	        else clr = 7 end
+	        add(starsx, x)
+	        add(starsy, y)
+	        add(starspd, spd)
+	        add(starclr, clr)
+	        add(starprevx, x)
+	        add(starprevy, y)
+	    end
+	end
+	
+	function init_planets()
+	    planetsx = {}
+	    planetsy = {}
+	    planetspd = {}
+	    planetsize = {}
+	    planetclr = {}
+	
+	    for i = 1, 5 do
+	        local x = flr(rnd(128))
+	        local y = flr(rnd(128))
+	        local distance_factor = rnd(1)
+	        local spd = 0.1 + distance_factor * 0.4
+	        local size = 1 + flr((1 - distance_factor) * 2)
+	        local clr = 5 + flr(distance_factor * 6)
+	        add(planetsx, x)
+	        add(planetsy, y)
+	        add(planetspd, spd)
+	        add(planetsize, size)
+	        add(planetclr, clr)
+	    end
+	end
+	
+	function init_asteroids()
+	    asteroidsx = {}
+	    asteroidsy = {}
+	    asteroidsspd = {}
+	    asteroidsize = {}
+	
+	    for i = 1, 1 do
+	        local x = flr(rnd(128))
+	        local y = flr(rnd(128))
+	        local distance_factor = rnd(1)
+	        local spd = 0.1 + distance_factor * 0.4
+	        local size = flr(rnd(2)) + 0.1
+	        add(asteroidsx, x)
+	        add(asteroidsy, y)
+	        add(asteroidsspd, spd)
+	        add(asteroidsize, size)
+	    end
+	end
+	
+	-- game update functions
+	
+	function update_game()
+	    handle_controls()
+	    move_ship()
+	    move_bullets()
+	    flame_bul1()
+	    animate_flame()
+	    animate_bullet()
+	    wrap_ship()
+	    animate_stars()
+	    animate_planets()
+	    animate_asteroids()
+	end
+	
+	function handle_controls()
+	    shipsx = 0
+	    shipsy = 0
+	    shipspr = 1
+	
+	    if btn(0) then shipsx = -2; shipspr = 2 end
+	    if btn(1) then shipsx = 3; shipspr = 3 end
+	    if btn(2) then shipsy = -2 end
+	    if btn(3) then shipsy = 2 end
+	
+	    if btnp(5) then
+	        bulx = shipx
+	        buly = shipy - 3
+	        muzzle = 7
+	        sfx(0)
+	    end
+	
+	    if btnp(4) then
+	        bul1x = shipx
+	        bul1y = shipy - 2
+	        muzzle = 10
+	        sfx(1)
+	    end
+	end
+	
+	function move_ship()
+	    shipx += shipsx
+	    shipy += shipsy
+	end
+	
+	function move_bullets()
+	    buly -= 4
+	    bul1y -= 2
+	end
+	
+	function flame_bul1()
+	    -- currenty empty
+	end
+	
+	function animate_flame()
+	    flamespr += 1
+	    if flamespr > 10 then flamespr = 6 end
+	end
+	
+	function animate_bullet()
+	    bulspr += 1
+	    if bulspr > 18 then bulspr = 16 end
+	end
+	
+	function wrap_ship()
+	    if shipx > 120 then shipx = 0
+	    elseif shipx < 0 then shipx = 120 end
+	end
+	
+	function animate_stars()
+	    for i = 1, #starsy do
+	        starprevx[i] = starsx[i]
+	        starprevy[i] = starsy[i]
+	        starsy[i] = starsy[i] + starspd[i]
+	        if starsy[i] > 128 then
+	            starsy[i] = starsy[i] - 128
+	            starprevy[i] = starsy[i]
+	        end
+	    end
+	end
+	
+	function animate_planets()
+	    for i = 1, #planetsx do
+	        planetsx[i] += planetspd[i]
+	        planetsy[i] += planetspd[i]
+	        if planetsx[i] > 128 then planetsx[i] = 0 end
+	        if planetsy[i] > 128 then planetsy[i] = 0 end
+	    end
 	end
 	
 	function animate_asteroids()
-    for i=1, #asteroidsx do
-        asteroidsx[i] += asteroidsspd[i]  
-        if asteroidsx[i] > 128 then asteroidsx[i] = 0 end
-    end
-end
-
+	    for i = 1, #asteroidsx do
+	        asteroidsx[i] += asteroidsspd[i]
+	        if asteroidsx[i] > 128 then asteroidsx[i] = 0 end
+	    end
+	end
+	
+	---
+	-- game drawing functions
+	---
+	function draw_game()
+	    draw_asteroids()
+	    draw_planets()
+	    starfield()
+	    draw_ship()
+	    draw_bullets()
+	    draw_flame()
+	    draw_muzzle()
+	    draw_score()
+	    draw_lives_bombs()
+	end
+	
+	function draw_ship()
+	    spr(shipspr, shipx, shipy)
+	end
+	
+	function draw_bullets()
+	    spr(bulspr, bulx, buly)
+	    spr(32, bul1x, bul1y - 2)
+	end
+	
+	function draw_flame()
+	    spr(flamespr, shipx, shipy + 8)
+	end
+	
+	function draw_muzzle()
+	    if muzzle == 7 then
+	        muzzle -= 2
+	        circfill(shipx + 3, shipy - 3, muzzle, 7)
+	    elseif muzzle == 10 then
+	        muzzle -= 0.5
+	        circfill(shipx + 3, shipy - 3, muzzle, 10)
+	    end
+	end
+	
+	function draw_score()
+	    print("score: " .. score, 40, 1, 12)
+	end
+	
+	function draw_lives_bombs()
+	    lives = 1 --just drawing for now
+	    for i = 1, 4 do
+	        if lives >= i then spr(13, i * 9 - 8, 1)
+	        else spr(14, i * 9 - 8, 1) end
+	    end
+	    bombs = 3 --just drawing for now
+	    for i = 1, 4 do
+	        if bombs >= i then spr(32, 128 - i * 9, 1) end
+	    end
+	end
+	
+	function starfield()
+	    for i = 1, #starsx do
+	        line(starprevx[i], starprevy[i], starsx[i], starsy[i], starclr[i])
+	        pset(starsx[i], starsy[i], starclr[i] + 8)
+	    end
+	end
+	
+	function draw_planets()
+	    for i = 1, #planetsx do
+	        circfill(planetsx[i], planetsy[i], planetsize[i], planetclr[i])
+	    end
+	end
+	
+	function draw_asteroids()
+	    for i = 1, #asteroidsx do
+	        local x = asteroidsx[i]
+	        local y = asteroidsy[i]
+	        local size = asteroidsize[i]
+	        local sprite = 24
+	        spr(sprite, x, y)
+	    end
+	end
